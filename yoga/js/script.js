@@ -136,7 +136,7 @@ window.addEventListener('DOMContentLoaded', function () {
                         step = 0,
                         distance = 0,
                         velocity = 0,
-                        interval = 0.6,
+                        interval = 1,
                         acceleration = startDistance/Math.pow(interval/2, 2),
                         int = 10,
                         timeInt = setInterval(goTo, int);
@@ -146,29 +146,33 @@ window.addEventListener('DOMContentLoaded', function () {
                     }
                     function goTo() {
                         distance = refs[i].getBoundingClientRect().top - menuPanel.clientHeight - margin;
-
+                        //сравниваем с максимальной скоростью на середине пути
                         if (velocity == acceleration*(interval/2)) {
                             acceleration = -startDistance/Math.pow(interval/2, 2);
                         }
                         velocity += acceleration * int/1000;
                         step = velocity * int/1000;
+                        //сравниваем с 0, на случай плохой сетки
                         if (velocity == 0) {
                             step = distance;
                         }
+                        //сравниваем с 1, на случай близкого расстояния
                         if (step < 1 && step > 0) {
                             step = 1;
                         }
                         if (step > -1 && step < 0) {
                             step = -1;
                         }
-                        if ((step < distance && startDistance >= 0) || (step > distance && startDistance < 0) && step != 0) {
+                        //сравниваем с текущим расстоянием
+                        if ((step < distance && startDistance >= 0) || (step > distance && startDistance < 0)) {
                             scrollBy(0, step);
                         } else {
                             scrollBy(0, distance);
                         }
-                        console.log(distance, step, velocity, acceleration);
 
                         distance = refs[i].getBoundingClientRect().top - menuPanel.clientHeight - margin;
+                        console.log(distance, step, velocity, acceleration);
+
                         if (distance == 0) {
                             clearInterval(timeInt);
                         }
